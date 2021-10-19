@@ -1,7 +1,12 @@
 
-function Form( {handleAddCake, formData, setFormData}) {
-    
+import {useEffect} from 'react';
 
+function Form( {handleAddCake, formData, setFormData}) {
+
+    useEffect(() => {
+        return () => console.log('form removed')
+    }, [])
+    
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
         //console.log(formData)
@@ -15,6 +20,7 @@ function Form( {handleAddCake, formData, setFormData}) {
     
     return(
         <>
+            
             <form onSubmit={handleSubmit} style={{display:"flex", flexDirection:"column"}}>
                 <label>Flavor</label>
                 <input

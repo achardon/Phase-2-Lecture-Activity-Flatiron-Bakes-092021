@@ -14,7 +14,7 @@ return(
             <p>Size:{size}</p>
             <p>Price: {price}</p>
             <p onClick={handleLike}>{liked?'♥':'♡'}</p>
-            <button onClick={() => editCake(cakeObj)}>Edit</button>
+            <button onClick={(e) => editCake(e, cakeObj)}>Edit</button>
         </div>
     )
 }

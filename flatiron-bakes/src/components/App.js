@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 //Components
 import CakeContainer from "./CakeContainer";
 import Header from "./Header";
@@ -8,13 +8,17 @@ import Flavors from './Flavors';
 import Form from './Form';
 
 //data
-import {cakes, flavorsData} from "../data/cakesData"
+// import {cakes, flavorsData} from "../data/cakesData"
 
 
 function App() {
-  const [cakeList, setCakeList] = useState(cakes)
+  const [cakes, setCakes] = useState([])
+  const [flavorsData, setFlavorsData] = useState([])
+  
+  const [cakeList, setCakeList] = useState([])
   const [selectedCake, setSelectedCake] = useState(null)
   const [search, setSearch] = useState('')
+  const [visible, setVisible] = useState(true)
 
   const [formData, setFormData] = useState({
     flavor:'',
@@ -23,9 +27,28 @@ function App() {
     price:''
   })
 
+  useEffect(() => {
+    fetch('http://localhost:4000/cakes')
+    .then(r => r.json())
+    .then(data => {
+      setCakes(data)
+      setCakeList(data)
+    })
+  }, [])
+
+  useEffect(() => {
+    fetch('http://localhost:4000/flavorsData')
+    .then(r => r.json())
+    .then(data => setFlavorsData(data))
+  }, [])
+
+  useEffect(() => {
+    console.log(formData)
+  }, [formData])
+
   const handleSearch = (e) => {
     setSearch(e.target.value)
-    setCakeList(cakes.filter(cake => cake.flavor.includes(e.target.value)))
+    setCakeList(cakeList.filter(cake => cake.flavor.includes(e.target.value)))
   }
 
   const handleCakeClick = (cake) => {
@@ -33,7 +56,7 @@ function App() {
   }
 
   const handleFilter = (flavor) => {
-    setCakeList(cakes.filter(cake => cake.flavor === flavor))
+    setCakeList(cakeList.filter(cake => cake.flavor === flavor))
   }
   
   const handleAddCake = (cake) => {
@@ -48,11 +71,14 @@ function App() {
       const copyOfCakes = [...cakeList]
       const updatedCake = {...copyOfCakes[idx], image: cake.image, size: cake.size, price: cake.price}
       copyOfCakes.splice(idx, 1, updatedCake)
+      //another way to do this:
+      //copyOfCakes[idx] = cake
       setCakeList(copyOfCakes)
     }
   }
 
-  const editCake = (cake) => {
+  const editCake = (e, cake) => {
+    e.stopPropagation()
     setFormData(cake)
   }
 
@@ -62,7 +88,13 @@ function App() {
       <Header bakeryName="FlatironBakes" slogan="live love code bake repeat"/>
       {selectedCake?<CakeDetail selectedCake={selectedCake} />:null}
       <Search search={search} handleSearch={handleSearch}/>
-      <Form handleAddCake={handleAddCake} formData={formData} setFormData={setFormData}/>
+      <br/>
+      <br/>
+      <button
+      onClick={() => setVisible(!visible)}
+      >{visible? "Hide Form": "Show Form"}</button>
+      {visible?
+      <Form handleAddCake={handleAddCake} formData={formData} setFormData={setFormData}/> : null}
       <Flavors handleFilter={handleFilter} flavorsData={flavorsData}/>
       <CakeContainer cakeList={cakeList} handleCakeClick={handleCakeClick} editCake={editCake}/>
     </div>
