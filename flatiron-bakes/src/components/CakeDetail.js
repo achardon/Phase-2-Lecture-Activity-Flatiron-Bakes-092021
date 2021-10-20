@@ -1,4 +1,4 @@
-function CakeDetail({selectedCake:{flavor,size = '6" cake',price, image,description}}){   
+function CakeDetail({selectedCake, selectedCake:{flavor,size = '6" cake',price, image,description,liked}, handleDelete, updateHandler}){   
     return(
             <>
                 <img src={image} alt={flavor}/>
@@ -6,6 +6,8 @@ function CakeDetail({selectedCake:{flavor,size = '6" cake',price, image,descript
                 <p>Size:{size}</p>
                 <p>Price: {price}</p>
                 <p>{description}</p>
+                <button onClick={() => updateHandler(selectedCake)}>{selectedCake.liked?"❤️" : "♡"}</button>
+                <button onClick={() => handleDelete(selectedCake)}>Delete</button>
             </>
         )
     }
